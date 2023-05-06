@@ -1,5 +1,5 @@
 # DVC
-Code For CVPR2022 paper "[PCR: Proxy-based Contrastive Replay for Online Class-Incremental Continual Learning](https://arxiv.org/abs/2304.04408)"
+Code For CVPR'2023 paper "[PCR: Proxy-based Contrastive Replay for Online Class-Incremental Continual Learning](https://arxiv.org/abs/2304.04408)"
 
 ## Usage
 
