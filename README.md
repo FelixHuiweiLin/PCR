@@ -1,9 +1,9 @@
-# DVC
+# PCR: Proxy-based Contrastive Replay for Online Class-Incremental Continual Learning
 Code For CVPR'2023 paper "[PCR: Proxy-based Contrastive Replay for Online Class-Incremental Continual Learning](https://arxiv.org/abs/2304.04408)"
 
 ## Usage
 ### Proxy-based Contrastive Replay
-Our method is in [PCR](https://arxiv.org/abs/2304.04408)
+Our method is in [https://github.com/FelixHuiweiLin/PCR/blob/main/agents/pcr.py](https://github.com/FelixHuiweiLin/PCR/blob/main/agents/pcr.py)
 
 ### Data preparation
 - CIFAR10 & CIFAR100 will be downloaded during the first run. (datasets/cifar10;/datasets/cifar100)
