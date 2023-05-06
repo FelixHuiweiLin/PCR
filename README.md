@@ -12,16 +12,16 @@ The framework is based on [online-continual-learning](https://github.com/RaptorM
 
 ### CIFAR-100
 ```shell
-  python general_main.py --data  cifar100 --cl_type nc --agent PCR  --retrieve random --update random --mem_size 1000
+  python general_main.py --num_runs 1 --data  cifar100 --cl_type nc --agent PCR  --retrieve random --update random --mem_size 1000
  ```
 
  ### CIFAR-10
 ```shell
-  python general_main.py --data cifar10 --cl_type nc --agent PCR --retrieve random --update random --mem_size 200
+  python general_main.py --num_runs 1 --data cifar10 --cl_type nc --agent PCR --retrieve random --update random --mem_size 200
  ```
  
  ### Mini-Imagenet
 ```shell
-python general_main.py --data  mini_imagenet --cl_type nc --agent PCR --retrieve random --update random --mem_size 1000
+python general_main.py --data --num_runs 1  mini_imagenet --cl_type nc --agent PCR --retrieve random --update random --mem_size 1000
  ```
  
