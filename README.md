@@ -3,11 +3,11 @@ Code For CVPR'2023 paper "[PCR: Proxy-based Contrastive Replay for Online Class-
 
 ## Usage
 ### Proxy-based Contrastive Replay
-The framework is based on [online-continual-learning](https://github.com/RaptorMai/online-continual-learning), and our method is in [https://github.com/FelixHuiweiLin/PCR/blob/main/agents/pcr.py](https://github.com/FelixHuiweiLin/PCR/blob/main/agents/pcr.py)
+The framework is based on [online-continual-learning](https://github.com/RaptorMai/online-continual-learning), and our method is in [https://github.com/FelixHuiweiLin/PCR/blob/main/agents/pcr.py](https://github.com/FelixHuiweiLin/PCR/blob/main/agents/pcr.py).
 
 ### Data preparation
 - CIFAR10 & CIFAR100 will be downloaded during the first run. (datasets/cifar10;/datasets/cifar100)
-- Mini-ImageNet: Download from https://www.kaggle.com/whitemoon/miniimagenet/download, and place it in datasets/mini_imagenet/
+- Mini-ImageNet: Download from https://www.kaggle.com/whitemoon/miniimagenet/download, and place it in datasets/mini_imagenet/.
 
 
 ### CIFAR-100
@@ -24,4 +24,3 @@ The framework is based on [online-continual-learning](https://github.com/RaptorM
 ```shell
 python general_main.py --data --num_runs 1  mini_imagenet --cl_type nc --agent PCR --retrieve random --update random --mem_size 1000
  ```
- 
