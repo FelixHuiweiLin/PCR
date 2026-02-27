@@ -23,7 +23,7 @@ PCR is in [https://github.com/FelixHuiweiLin/PCR/blob/main/agents/pcr.py](https:
 python general_main.py --data --num_runs 1  mini_imagenet --cl_type nc --agent PCR --retrieve random --update random --mem_size 1000
  ```
 
-HPCR is in [https://github.com/FelixHuiweiLin/PCR/blob/main/agents/pcr.py](https://github.com/FelixHuiweiLin/PCR/blob/main/agents/hpcr.py).
+HPCR is in [https://github.com/FelixHuiweiLin/PCR/blob/main/agents/hpcr.py](https://github.com/FelixHuiweiLin/PCR/blob/main/agents/hpcr.py).
 
 ### CIFAR-100
 ```shell
