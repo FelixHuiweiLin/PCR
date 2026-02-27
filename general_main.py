@@ -4,7 +4,8 @@ import numpy as np
 import torch
 from experiment.run import multiple_run
 from utils.utils import boolean_string
-
+import os
+# os.environ['CUDA_VISIBLE_DEVICES']='1'
 
 def main(args):
     print(args)
@@ -26,9 +27,9 @@ if __name__ == "__main__":
     # Commandline arguments
     parser = argparse.ArgumentParser(description="Online Continual Learning PyTorch")
     ########################General#########################
-    parser.add_argument('--num_runs', dest='num_runs', default=1, type=int,
+    parser.add_argument('--num_runs', dest='num_runs', default=10, type=int,
                         help='Number of runs (default: %(default)s)')
-    parser.add_argument('--seed', dest='seed', default=0, type=int,
+    parser.add_argument('--seed', dest='seed', default=2026, type=int,
                         help='Random seed')
 
     ########################Misc#########################
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     parser.add_argument('--save-path', dest='save_path', default=None)
 
     ########################Agent#########f################
-    parser.add_argument('--agent', dest='agent', default='PCR',
+    parser.add_argument('--agent', dest='agent', default='HPCR',
                         choices=['ER', 'EWC', 'AGEM', 'CNDPM', 'LWF', 'ICARL', 'GDUMB', 'ASER', 'SCR'],
                         help='Agent selection  (default: %(default)s)')
     parser.add_argument('--update', dest='update', default='random', choices=['random', 'GSS', 'ASER'],
@@ -83,7 +84,7 @@ if __name__ == "__main__":
     parser.add_argument('--plot_sample', dest='plot_sample', default=False,
                         type=boolean_string,
                         help='In NI scenario, should sample images be plotted (default: %(default)s)')
-    parser.add_argument('--data', dest='data', default="cifar100",
+    parser.add_argument('--data', dest='data', default="cifar100", choices=['cifar100', 'cifar10', 'mini_imagenet'],
                         help='Path to the dataset. (default: %(default)s)')
     parser.add_argument('--cl_type', dest='cl_type', default="nc", choices=['nc', 'ni'],
                         help='Continual learning type: new class "nc" or new instance "ni". (default: %(default)s)')
@@ -186,6 +187,17 @@ if __name__ == "__main__":
                         help='warmup of buffer before retrieve')
     parser.add_argument('--head', type=str, default='mlp',
                         help='projection head')
+    
+    ########################PCR#########################
+    parser.add_argument('--pcr_temp', dest='pcr_temp', default=0.09, type=float, help='The temperature for PCR loss')
+    parser.add_argument('--pcr_type', type=str, default='proxy', help='the mode of PCR')
+    ########################HPCR#########################
+    parser.add_argument('--hpcr_temp_max', dest='hpcr_temp_max', default=1.8, type=float, help='The max temperature for HPCR loss, 0.09/0.05=1.8')
+    parser.add_argument('--hpcr_temp_min', dest='hpcr_temp_min', default=0.5625, type=float, help='The min temperature for HPCR loss, 0.09/0.16=0.5625')
+    parser.add_argument('--hpcr_PCD_alpha', dest='hpcr_PCD_alpha', default=0.1, type=float, help='The alpha for PCD loss in HPCR, 0.1 for CIFAR-100 and Mini-ImageNet, 0.01 for CIFAR-10')
+    parser.add_argument('--hpcr_SCD_beta', dest='hpcr_SCD_beta', default=0.5, type=float, help='The beta for SCD loss in HPCR, 0.5 for CIFAR-100, 0.5 for Mini-ImageNet, 0.5 for CIFAR-10')
+
+
     args = parser.parse_args()
     args.cuda = torch.cuda.is_available()
     main(args)
