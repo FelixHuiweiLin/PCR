@@ -5,7 +5,7 @@ class Reservoir_update(object):
     def __init__(self, params):
         super().__init__()
 
-    def update(self, buffer, x, y, **kwargs):
+    def update(self, buffer, x, y, logits, features, **kwargs):
         batch_size = x.size(0)
 
         # add whatever still fits in the buffer
@@ -14,10 +14,15 @@ class Reservoir_update(object):
             offset = min(place_left, batch_size)
             buffer.buffer_img[buffer.current_index: buffer.current_index + offset].data.copy_(x[:offset])
             buffer.buffer_label[buffer.current_index: buffer.current_index + offset].data.copy_(y[:offset])
+            buffer.buffer_logits[buffer.current_index: buffer.current_index + offset].data.copy_(logits[:offset])
+            buffer.buffer_age[buffer.current_index: buffer.current_index + offset]=1
+            buffer.buffer_features[buffer.current_index: buffer.current_index + offset].data.copy_(features[:offset])
 
 
             buffer.current_index += offset
             buffer.n_seen_so_far += offset
+            for idx in range(batch_size):
+                buffer.samples_per_cls[y[idx]]+=1
 
             # everything was added
             if offset == x.size(0):
@@ -30,12 +35,12 @@ class Reservoir_update(object):
         #TODO: the buffer tracker will have bug when the mem size can't be divided by batch size
 
         # remove what is already in the buffer
-        x, y = x[place_left:], y[place_left:]
+        x, y, logits = x[place_left:], y[place_left:], logits[place_left:]
 
         indices = torch.FloatTensor(x.size(0)).to(x.device).uniform_(0, buffer.n_seen_so_far).long()
         valid_indices = (indices < buffer.buffer_img.size(0)).long()
 
-        idx_new_data = valid_indices.nonzero().squeeze(-1)
+        idx_new_data = valid_indices.nonzero(as_tuple=False).squeeze(-1)
         idx_buffer   = indices[idx_new_data]
 
         buffer.n_seen_so_far += x.size(0)
@@ -45,17 +50,25 @@ class Reservoir_update(object):
 
         assert idx_buffer.max() < buffer.buffer_img.size(0)
         assert idx_buffer.max() < buffer.buffer_label.size(0)
+        assert idx_buffer.max() < buffer.buffer_logits.size(0)
+        assert idx_buffer.max() < buffer.buffer_age.size(0)
         # assert idx_buffer.max() < self.buffer_task.size(0)
 
         assert idx_new_data.max() < x.size(0)
         assert idx_new_data.max() < y.size(0)
+        assert idx_new_data.max() < logits.size(0)
 
         idx_map = {idx_buffer[i].item(): idx_new_data[i].item() for i in range(idx_buffer.size(0))}
-
+        for idx in range(len(idx_map)):
+            buffer.samples_per_cls[buffer.buffer_label[list(idx_map.keys())[idx]].cpu().data]-=1
+            buffer.samples_per_cls[y[list(idx_map.values())[0]].cpu().data]+=1
         replace_y = y[list(idx_map.values())]
         if buffer.params.buffer_tracker:
             buffer.buffer_tracker.update_cache(buffer.buffer_label, replace_y, list(idx_map.keys()))
         # perform overwrite op
         buffer.buffer_img[list(idx_map.keys())] = x[list(idx_map.values())]
         buffer.buffer_label[list(idx_map.keys())] = replace_y
+        buffer.buffer_logits[list(idx_map.keys())] = logits[list(idx_map.values())]
+        buffer.buffer_age[list(idx_map.keys())] = 1
+        buffer.buffer_features[list(idx_map.keys())] = features[list(idx_map.values())]
         return list(idx_map.keys())

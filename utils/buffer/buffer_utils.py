@@ -6,7 +6,7 @@ from collections import Counter
 import random
 
 
-def random_retrieve(buffer, num_retrieve, excl_indices=None, return_indices=False):
+def random_retrieve(buffer, num_retrieve, excl_indices=None, return_indices=True):
     filled_indices = np.arange(buffer.current_index)
     if excl_indices is not None:
         excl_indices = list(excl_indices)
@@ -20,10 +20,10 @@ def random_retrieve(buffer, num_retrieve, excl_indices=None, return_indices=Fals
 
     y = buffer.buffer_label[indices]
 
-    if return_indices:
-        return x, y, indices
-    else:
-        return x, y
+    logits = buffer.buffer_logits[indices]
+    age = buffer.buffer_age[indices]
+    features = buffer.buffer_features[indices]
+    return x, y, logits, features, age, indices
 
 
 def match_retrieve(buffer, cur_y, exclud_idx=None):
@@ -79,7 +79,7 @@ class ClassBalancedRandomSampling:
     class_num_cache = None
 
     @classmethod
-    def sample(cls, buffer_x, buffer_y, n_smp_cls, excl_indices=None, device="cpu"):
+    def sample(cls, buffer_x, buffer_y, buffer_logits, buffer_feas, buffer_ages,  n_smp_cls, excl_indices=None, device="cpu"):
         """
             Take same number of random samples from each class from buffer.
                 Args:
@@ -114,11 +114,16 @@ class ClassBalancedRandomSampling:
 
         x = buffer_x[sample_ind]
         y = buffer_y[sample_ind]
+        logits = buffer_logits[sample_ind]
+        feas = buffer_feas[sample_ind]
+        ages = buffer_ages[sample_ind]
 
         x = maybe_cuda(x)
         y = maybe_cuda(y)
+        logits= maybe_cuda(logits)
+        ages = maybe_cuda(ages)
 
-        return x, y, sample_ind
+        return x, y, logits, feas, ages,sample_ind
 
     @classmethod
     def update_cache(cls, buffer_y, num_class, new_y=None, ind=None, device="cpu"):
