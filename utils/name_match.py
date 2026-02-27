@@ -12,6 +12,7 @@ from agents.lwf import Lwf
 from agents.icarl import Icarl
 from agents.scr import SupContrastReplay
 from agents.pcr import ProxyContrastiveReplay
+from agents.hpcr import HolisticProxyContrastiveReplay
 from utils.buffer.random_retrieve import Random_retrieve
 from utils.buffer.reservoir_update import Reservoir_update
 from utils.buffer.mir_retrieve import MIR_retrieve
@@ -38,7 +39,8 @@ agents = {
     'ICARL': Icarl,
     'GDUMB': Gdumb,
     'SCR': SupContrastReplay,
-    'PCR': ProxyContrastiveReplay
+    'PCR': ProxyContrastiveReplay,
+    'HPCR': HolisticProxyContrastiveReplay
 }
 
 retrieve_methods = {
