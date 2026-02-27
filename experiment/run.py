@@ -44,6 +44,7 @@ def multiple_run(params, store=False, save_path=None):
         test_loaders = setup_test_loader(data_continuum.test_data(), params)
         if params.online:
             for i, (x_train, y_train, labels) in enumerate(data_continuum):
+                agent.i=i
                 print("-----------run {} training batch {}-------------".format(run, i))
                 print('size: {}, {}'.format(x_train.shape, y_train.shape))
                 agent.train_learner(x_train, y_train)
