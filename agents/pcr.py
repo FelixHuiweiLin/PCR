@@ -51,7 +51,7 @@ class ProxyContrastiveReplay(ContinualLearner):
                     self.opt.zero_grad()
 
 
-                    mem_x, mem_y = self.buffer.retrieve(x=batch_x, y=batch_y)
+                    mem_x, mem_y, _, _, _, _ = self.buffer.retrieve(x=batch_x, y=batch_y)
                     if mem_x.size(0) > 0:
                         # mem_x, mem_y = Rotation(mem_x, mem_y)
                         mem_x_aug = torch.stack([transforms_aug[self.data](mem_x[idx].cpu())
@@ -78,13 +78,13 @@ class ProxyContrastiveReplay(ContinualLearner):
                         cos_features = torch.cat([combined_feas_normalized.unsqueeze(1),
                                                   combined_feas_aug_normalized.unsqueeze(1)],
                                                  dim=1)
-                        PSC = SupConLoss(temperature=0.09, contrast_mode='proxy')
+                        PSC = SupConLoss(temperature=self.params.pcr_temp, contrast_mode=self.params.pcr_type)
                         novel_loss += PSC(features=cos_features, labels=combined_labels)
 
 
                     novel_loss.backward()
                     self.opt.step()
                 # update mem
-                self.buffer.update(batch_x, batch_y)
+                self.buffer.update(batch_x, batch_y, logits.detach(), feas.detach())
 
         self.after_train()

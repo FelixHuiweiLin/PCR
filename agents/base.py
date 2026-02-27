@@ -39,6 +39,7 @@ class ContinualLearner(torch.nn.Module, metaclass=abc.ABCMeta):
         self.bias_norm_old = []
         self.lbl_inv_map = {}
         self.class_task_map = {}
+        self.i=0
 
     def before_train(self, x_train, y_train):
         new_labels = list(set(y_train.tolist()))
@@ -174,11 +175,11 @@ class ContinualLearner(torch.nn.Module, metaclass=abc.ABCMeta):
                         # _, preds = torch.matmul(means, feature).max(0)
                         correct_cnt = (np.array(self.old_labels)[
                                            pred_label.tolist()] == batch_y.cpu().numpy()).sum().item() / batch_y.size(0)
-                    elif self.params.agent=='PCR':
+                    elif self.params.agent=='PCR' or self.params.agent=='HPCR':
                         logits, _ = self.model.pcrForward(batch_x)
-                        # mask = torch.zeros_like(logits)
-                        # mask[:, self.old_labels] = 1
-                        # logits = logits.masked_fill(mask == 0, -1e9)
+                        mask = torch.zeros_like(logits)
+                        mask[:, self.old_labels] = 1
+                        logits = logits.masked_fill(mask == 0, -1e9)
                         _, pred_label = torch.max(logits, 1)
                         correct_cnt = (pred_label == batch_y).sum().item() / batch_y.size(0)
                     else:
